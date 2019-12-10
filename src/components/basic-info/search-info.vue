@@ -4,6 +4,15 @@
     padding-right: 60px;
   }
 }
+.search-table {
+  border-radius: 8px;
+  margin-top: 20px;
+  align-items: center;
+}
+.div-form {
+  border: 1px solid #999999;
+  margin: 20px 0;
+}
 </style>
 
 <template>
@@ -13,215 +22,179 @@
         <span class="h-panel-title">信息查询</span>
       </div>
       <div class="h-panel-body">
-        <Form :label-width="110" mode="twocolumn" :model="data" :rules="validationRules" ref="form" showErrorTip>
-          <FormItem label="选择" prop="select2">
-            <Select v-model="data.select2" dict="simple"></Select>
+        <Form :label-width="110" mode="twocolumn" :model="searchParams" :rules="validationRules" ref="form">
+          <FormItem label="查询类型" prop="type">
+            <Radio v-model="searchParams.type" :datas="selectSearchType" @change="radioChange"></Radio>
           </FormItem>
-          <FormItem label="输入框" prop="input">
-            <input type="text" v-model="data.input" placeholder="请输入15/18位的字符串" />
-            <template slot="error" slot-scope="props">
-              <!-- *type*: base, combine, async -->
-              <span class="link" v-if="props.type == 'async'">+++++++错误的特殊提示+++++++</span>
+          <FormItem label="请求时间" prop="qTime">
+            <template>
+              <div>
+                <DatePicker v-model="searchParams.qTime" type="datetime" :has-seconds="true" :option="{ minuteStep:30 }"></DatePicker>
+              </div>
             </template>
           </FormItem>
-          <FormItem label="整数" prop="int">
-            <NumberInput v-model="data.int" :min="0" :max="100"></NumberInput>
+          <FormItem v-if="showTableType === 'sensor' || showTableType === 'strategy'" label="传感器编号" prop="sensorCode">
+            <input type="text" v-model="searchParams.sensorCode" />
           </FormItem>
-          <FormItem label="数字" prop="number">
-            <input type="text" v-model="data.number" />
+          <FormItem v-if="showTableType === 'sensor' || showTableType === 'strategy'" label="时间段长度" prop="timeLine">
+            <Select v-model="searchParams.timeLine" :datas="selectTimeLine"></Select>
           </FormItem>
-          <FormItem label="邮箱" prop="email">
-            <input type="text" v-model="data.email" />
+          <FormItem v-if="showTableType === 'manager'" label="人员编号" prop="regionAdmin">
+            <input  type="text" v-model="searchParams.regionAdmin" />
           </FormItem>
-          <FormItem label="网址" prop="url">
-            <input type="text" v-model="data.url" />
+          <FormItem v-if="showTableType === 'manager'" label="管理员类型" prop="managerType">
+            <Radio v-model="searchParams.managerType" :datas="selectManagerType"></Radio>
           </FormItem>
-          <FormItem label="电话" prop="tel">
-            <input type="text" v-model="data.tel" />
+          <FormItem v-if="showTableType === 'region'" label="地区编号" prop="regionCode">
+            <input type="text" v-model="searchParams.regionCode" />
           </FormItem>
-          <FormItem label="手机号码" prop="mobile">
-            <input type="text" v-model="data.mobile" />
-          </FormItem>
-          <FormItem label="金额" :required="true">
-            <div class="h-input-group">
-              <div class="h-input-addon">
-                <Select v-model="data.select1" :datas="param1" :no-border="true" :null-option="false"></Select>
-              </div>
-              <FormItem prop="money.min" label="起始金额" :show-label="false">
-                <input type="text" placeholder="起始金额" v-model="data.money.min" />
-              </FormItem>
-              <span class="h-input-addon">-</span>
-              <FormItem prop="money.max" label="结束金额" :show-label="false">
-                <input type="text" placeholder="结束金额" v-model="data.money.max" />
-              </FormItem>
-              <span class="h-input-addon">K</span>
-            </div>
-          </FormItem>
-          <FormItem label="标签" prop="taginputs">
-            <TagInput v-model="data.taginputs"></TagInput>
-          </FormItem>
-          <FormItem label="多选" prop="select3">
-            <Select v-model="data.select3" dict="simple" :multiple="true"></Select>
-          </FormItem>
-          <FormItem label="日期" prop="date">
-            <DatePicker placeholder="选择日期" v-model="data.date"></DatePicker>
-          </FormItem>
-          <FormItem label="评分" prop="rate">
-            <Rate v-model="data.rate" :show-text="true"></Rate>
-          </FormItem>
-          <FormItem label="多文本" :single="true" prop="textarea">
-            <textarea rows="3" v-autosize v-wordcount="50" v-model="data.textarea"></textarea>
-          </FormItem>
-          <FormItem label="单选" prop="radio">
-            <Radio v-model="data.radio" :datas="dataParam"></Radio>
-          </FormItem>
-          <FormItem label="多选" prop="checkbox">
-            <Checkbox v-model="data.checkbox" :datas="dataParam"></Checkbox>
-          </FormItem>
-          <FormItem label="模糊匹配" prop="autocomplete">
-            <AutoComplete v-model="data.autocomplete" config="simple"></AutoComplete>
-          </FormItem>
-          <!--
-            这里定义的required属性同样适用与验证规则中，
-            验证的字段即可以是things[0]（代表独立的数据验证），也可以是things[]（代表整个数组的数据验证）
-           -->
-          <FormItem label="自定义规则" prop="things[0]" required>
-            <input type="text" v-model="data.things[0]" />
-          </FormItem>
-          <FormItem label="分类选择" prop="category">
-            <Category :option="categoryParam" type="key" v-model="data.category"></Category>
-          </FormItem>
-          <FormItemList>
-            <FormItem v-for="(item, index) of data.inputs" :key="item" :label="'输入框'+(index+1)" :prop="'inputs['+index+'].value'">
-              <Row type="flex">
-                <Cell class="flex1">
-                <input type="text" v-model="item.value" />
-                </Cell>
-                <Cell class="text-right" v-width="50">
-                <Poptip @confirm="remove(index)" content="确定删除？">
-                  <Button text-color="red" :no-border="true" icon="h-icon-trash"></Button>
-                </Poptip>
-                </Cell>
-              </Row>
-            </FormItem>
-          </FormItemList>
-          <FormItem :single="true">
-            <Button size="s" text-color="blue" @click="add">添加输入框</Button>
+          <FormItem v-if="showTableType === 'region'" label="地区名称" prop="regionName">
+            <input type="text" v-model="searchParams.regionName" />
           </FormItem>
           <FormItem :no-padding="true">
-            <Button color="primary" :loading="isLoading" @click="submit">提交</Button>&nbsp;&nbsp;&nbsp;
-            <Button @click="reset">重置验证</Button>
+            <Button color="primary" :loading="isLoading" @click="search">查找</Button>&nbsp;&nbsp;&nbsp;
+            <Button @click="resetCheck">重置验证</Button>
             <Button @click="resetData">重置数据</Button>
           </FormItem>
         </Form>
+        <div class="search-table div-form">
+          <Form :label-width="110" mode="twocolumn" :model="searchRes" ref="form">
+            <FormItem label="Readonly" readonly>只读数据</FormItem>
+            <FormItem label="Readonly" readonly>只读数据</FormItem>
+            <FormItem label="Readonly" readonly>只读数据</FormItem>
+            <FormItem label="Readonly" readonly>只读数据</FormItem>
+          </Form>
+        </div>
+        <Table v-if="showTableType === 'sensor'" :loading="isLoading" :datas="searchRes" class="search-table">
+          <TableItem title="序号">
+            <template slot-scope="{index}">{{index+1}} </template>
+          </TableItem>
+          <TableItem :width="240" prop="soilTemp" title="当前土壤温度"></TableItem>
+          <TableItem :width="240" prop="soilEvapor" title="当前土壤蒸发速率"></TableItem>
+          <TableItem :width="240" prop="soilMoist" title="当前土壤湿度"></TableItem>
+          <TableItem :width="240" prop="airTemp" title="当前土壤温度"></TableItem>
+          <TableItem :width="240" prop="estimatedLoss" title="当前是否需要浇水"></TableItem>
+          <TableItem :width="240" prop="distancePoint" title="距开始的时间长度"></TableItem>
+        </Table>
+        <Table v-if="showTableType === 'region'" :loading="isLoading" :datas="searchRes" class="search-table">
+          <TableItem title="序号">
+            <template slot-scope="{index}">{{index+1}} </template>
+          </TableItem>
+          <TableItem :width="252" prop="sensorCode" title="传感器编号"></TableItem>
+          <TableItem :width="252" prop="state" title="传感器状态"></TableItem>
+          <TableItem :width="252" prop="position" title="地点位置"></TableItem>
+          <TableItem :width="252" prop="regionName" title="所属地区名称"></TableItem>
+          <TableItem :width="252" prop="obArea" title="传感器观测面积"></TableItem>
+        </Table>
       </div>
     </div>
   </div>
 </template>
 <script>
-import FormModel from 'model/Form';
+
 export default {
   data() {
     return {
       mode: 'single',
-      data: FormModel.parse({}),
-      dataParam: {
-        1: '男',
-        2: '女',
-        3: '其他'
-      },
-      param1: ['美金', '人民币', '卢布'],
-      categoryParam: {
-        title: '测试',
-        keyName: 'id',
-        titleName: 'name',
-        dataMode: 'tree',
-        datas: []
+      showTableType: 'sensor',
+      selectSearchType: [{ title: '传感器', key: 0 }, { title: '管理人员', key: 1 }, { title: '种植区域', key: 2 }, { title: '灌溉策略', key: 3 }],
+      selectTimeLine: [{ title: '1h', key: 0 }, { title: '2h', key: 1 }, { title: '3h', key: 2 }, { title: '6h', key: 3 }, { title: '12h', key: 4 }, { title: '24h', key: 5 }, { title: '48h', key: 6 }, { title: '72h', key: 7 }],
+      selectManagerType: [{ title: '超级管理员', key: 0 }, { title: '普通管理员', key: 1 }],
+      searchParams: {
+        uId: '',
+        type: 0,
+        uType: 0,
+        qTime: '',
+        timeLine: 0,
+        sensorCode: '',
+        regionCode: '',
+        regionName: '',
+        managerType: 0,
+        regionAdmin: ''
       },
       isLoading: false,
+      searchRes: [],
       validationRules: {
         rules: {
-          textarea: {
-            maxLen: 50,
-            minLen: 10
-          },
-          input: {
-            valid(value) {
-              if (value.length == 15 || value.length == 18) {
-                return true;
-              } else {
-                return '字段长度非15/18位，可能不符合规定';
-              }
-            }
-          }
         },
         required: [
-          'autocomplete',
-          'category',
-          'select2',
-          'select3',
-          'inputs[].value',
-          'input',
-          'radio',
-          'rate',
-          'checkbox',
-          'money',
-          'date',
-          'taginputs',
-          'money.min',
-          'money.max',
-          'int',
-          'number',
-          'url',
-          'email',
-          'tel',
-          'mobile'
-        ],
-        int: ['int'],
-        number: ['number', 'money.min', 'money.max'],
-        url: ['url'],
-        email: ['email'],
-        tel: ['tel'],
-        mobile: ['mobile'],
-        combineRules: [
-          {
-            parentRef: 'money',
-            refs: ['min', 'max'],
-            valid: {
-              valid: 'lessThan',
-              message: '起始金额不能大于结束金额'
-            }
-          }
+          'type',
+          'qTime',
+          'timeLine',
+          'sensorCode',
+          'regionCode',
+          'regionName',
+          'managerType',
+          'regionAdmin'
         ]
       }
     };
   },
   methods: {
-    submit() {
-      let validResult = this.$refs.form.valid();
-      if (validResult.result) {
-        this.$Message('验证成功');
-        this.isLoading = true;
-        setTimeout(() => {
-          this.isLoading = false;
-        }, 1000);
+    init() {
+      // this.resetParams = Utils.copy(this.searchParams);
+    },
+    search() {
+      let that = this;
+      that.isLoading = true;
+      console.log(that.searchParams);
+      // todo：下面要做ajax
+      if (that.searchParams.type === 0 || that.searchParams.type === 3) {
+        if (that.checkSearchParams(that.searchParams, 0)) {
+        }
+      } else if (that.searchParams.type === 1) {
+        if (that.checkSearchParams(that.searchParams, 1)) {
+        }
+      } else if (that.searchParams.type === 2) {
+        if (that.checkSearchParams(that.searchParams, 2)) {
+        }
+      }
+      that.isLoading = false;
+    },
+    checkSearchParams(params, type) {
+      if (type === 0) {
+        return typeof params.timeLine === 'number' && params.sensorCode.length > 0 && params.qTime.length > 0;
+      } else if (type === 1) {
+        return typeof params.managerType === 'number' && params.regionAdmin.length > 0 && params.qTime.length > 0;
+      } else {
+        return params.regionName.length > 0 && params.regionCode.length > 0 && params.qTime.length > 0;
       }
     },
-    reset() {
+    resetCheck() {
       this.isLoading = false;
       this.$refs.form.resetValid();
     },
     resetData() {
       this.isLoading = false;
       this.$refs.form.resetValid();
-      this.data = FormModel.parse({});
+      this.searchParams = {
+        uId: '',
+        type: 0,
+        uType: 0,
+        qTime: '',
+        timeLine: '',
+        sensorCode: '',
+        regionCode: '',
+        regionName: '',
+        managerType: '',
+        regionAdmin: ''
+      };
     },
-    add() {
-      this.data.inputs.push({ value: '' });
-    },
-    remove(index) {
-      this.data.inputs.splice(index, 1);
+    radioChange(e) {
+      if (e.key === 0) {
+        this.showTableType = 'sensor';
+      } else if (e.key === 1) {
+        this.showTableType = 'manager';
+      } else if (e.key === 2) {
+        this.showTableType = 'region';
+      } else if (e.key === 3) {
+        this.showTableType = 'strategy';
+      }
+      console.log(this.searchParams);
     }
+  },
+  mounted() {
+    this.init();
   }
 };
 </script>
