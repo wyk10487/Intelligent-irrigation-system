@@ -7,7 +7,6 @@
 </template>
 <script>
 import Plupload from 'plupload-es6';
-import bus from '../../js/common/bus';
 
 export default {
   props: {
@@ -90,7 +89,7 @@ export default {
             that.$Message.error(errTip);
           },
           UploadComplete() {
-            bus.$emit('completeUpload');
+            this.$emit('completeUpload');
             let fileList = that.$refs.uploader.getFileList();
             //   fileList.map(item=>{
             //     // 对返回的数据做最后的组装
