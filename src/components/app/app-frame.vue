@@ -101,7 +101,6 @@ export default {
       //   }
       // });
       let menus = Utils.getLocal2Json('SYS_CONFIG_MENU') || fullMenuKeys;
-      log(menus);
       G.set('SYS_MENUS', menus);
       G.trigger('SYS_MENU_UPDATE');
       if (!isAuthPage(this.$route.name)) {

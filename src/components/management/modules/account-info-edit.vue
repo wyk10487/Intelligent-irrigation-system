@@ -3,13 +3,11 @@
   padding: 30px 30px 30px 0;
   max-width: 500px;
 }
+
 </style>
 <template>
   <div class="account-info-vue">
     <Form :model="acc" :rules="rules" ref="form" showErrorTip>
-      <FormItem label="头像" prop="avatar">
-        <Uploader :options="options" type="image" data-type="url" v-model="acc.avatar" :limit="1"></Uploader>
-      </FormItem>
       <FormItem label="姓名" prop="name">
         <input type="text" v-model="acc.name"/>
       </FormItem>
@@ -51,30 +49,30 @@ export default {
   data() {
     return {
       acc: Utils.copy(this.account),
+      listener: null,
+      saveloading: false,
+      read: true,
+      uploadList: [],
       rules: {
         required: ['name', 'id', 'mobile', 'desc', 'email', 'org'],
         email: ['email'],
         mobile: ['mobile']
-      },
-      options: {
-        type: 'image',
-        max_file_size: '2mb', // 图片大小不能超过2mb
-        dragdrop: false,
-        filters: {
-          mime_types: [
-            { title: 'Image files', extensions: 'jpg,gif,png' }
-          ],
-          prevent_duplicates: true // 不允许选取重复文件
-        }
-      },
-      saveloading: false
+      }
     };
   },
   mounted() {
-    this.init();
+    this.$nextTick(() => {
+      this.init();
+    });
+  },
+  beforeDestroy() {
+    G.removelistener(this.listener);
   },
   methods: {
     init() {
+      this.listener = G.addlistener('completeUpload', (data) => {
+        log(`图片： ${data.files}`);
+      });
     },
     save() {
       if (!this.$refs.form.valid().result) return;
@@ -97,13 +95,21 @@ export default {
       }
     },
     reset() {
-      this.$refs.form.reset();
+      this.read = false;
+      this.$refs.form.resetValid();
       let newAcc = Utils.copy(this.account);
       this.acc = {
         avatar: newAcc.avatar,
         desc: newAcc.desc,
         id: newAcc.id
       };
+    },
+    fileclick(file) {
+      console.log('fileclick');
+      this.$Modal({
+        title: '预览或者下载',
+        content: `自定义处理文件预览或者下载`
+      });
     }
   },
   computed: {

@@ -5,80 +5,80 @@ const fullMenus = [
     icon: 'icon-monitor'
   },
   {
-    title: '列表应用',
-    key: 'tablelist',
+    title: '基本信息',
+    key: 'BasicInfo',
     icon: 'icon-grid-2',
     children: [
       {
-        title: '基础表格',
-        key: 'TableBasic'
+        title: '信息预览',
+        key: 'ShowInfo'
       },
       {
-        title: '查询列表',
-        key: 'TableSearch'
+        title: '信息查询',
+        key: 'SearchInfo'
       }
     ]
   },
-  {
-    title: '表单应用',
-    key: 'form-folder',
-    icon: 'icon-paper',
-    children: [
-      {
-        title: '基础表单',
-        key: 'Form'
-      },
-      {
-        title: '表单详情',
-        key: 'FormDetail'
-      }
-    ]
-  },
-  {
-    title: '模糊匹配',
-    key: 'AutoComplete-folder',
-    icon: 'icon-disc',
-    children: [
-      {
-        title: '模糊搜索',
-        key: 'Autocomplete1'
-      },
-      {
-        title: '场景应用',
-        key: 'Autocomplete2'
-      },
-      {
-        title: '复杂场景',
-        key: 'Autocomplete3'
-      }
-    ]
-  },
-  {
-    title: '扩展组件',
-    key: 'Advance-folder',
-    icon: 'icon-bar-graph-2',
-    children: [
-      {
-        title: '图表',
-        key: 'Chart'
-      },
-      {
-        title: '富文本编辑器',
-        key: 'RicktextEditor'
-      },
-      {
-        title: '代码编辑器',
-        key: 'CodeEditor'
-      },
-      {
-        title: 'Markdown编辑器',
-        key: 'MarkdownEditor'
-      }, {
-        title: '百度地图',
-        key: 'BaiduMap'
-      }
-    ]
-  },
+  // {
+  //   title: '表单应用',
+  //   key: 'form-folder',
+  //   icon: 'icon-paper',
+  //   children: [
+  //     {
+  //       title: '基础表单',
+  //       key: 'Form'
+  //     },
+  //     {
+  //       title: '表单详情',
+  //       key: 'FormDetail'
+  //     }
+  //   ]
+  // },
+  // {
+  //   title: '模糊匹配',
+  //   key: 'AutoComplete-folder',
+  //   icon: 'icon-disc',
+  //   children: [
+  //     {
+  //       title: '模糊搜索',
+  //       key: 'Autocomplete1'
+  //     },
+  //     {
+  //       title: '场景应用',
+  //       key: 'Autocomplete2'
+  //     },
+  //     {
+  //       title: '复杂场景',
+  //       key: 'Autocomplete3'
+  //     }
+  //   ]
+  // },
+  // {
+  //   title: '扩展组件',
+  //   key: 'Advance-folder',
+  //   icon: 'icon-bar-graph-2',
+  //   children: [
+  //     {
+  //       title: '图表',
+  //       key: 'Chart'
+  //     },
+  //     {
+  //       title: '富文本编辑器',
+  //       key: 'RicktextEditor'
+  //     },
+  //     {
+  //       title: '代码编辑器',
+  //       key: 'CodeEditor'
+  //     },
+  //     {
+  //       title: 'Markdown编辑器',
+  //       key: 'MarkdownEditor'
+  //     }, {
+  //       title: '百度地图',
+  //       key: 'BaiduMap'
+  //     }
+  //   ]
+  // },
   {
     title: '系统设置',
     key: 'management',

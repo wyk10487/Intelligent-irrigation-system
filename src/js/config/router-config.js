@@ -50,7 +50,38 @@ const initRouter = () => {
           component: (resolve) => require(['components/management/modules/notice-setting'], resolve),
           meta: { title: '通知设置' }
         }]
+      },
+      // ----------------------------------
+      // BasicInfo信息查询的路由
+      {
+        path: 'basic-info/show-info',
+        name: 'ShowInfo',
+        component: (resolve) => require(['components/basic-info/show-info'], resolve),
+        meta: { title: '传感器基本信息' }
       }, {
+        path: 'basic-info/search-info',
+        name: 'SearchInfo',
+        component: (resolve) => require(['components/basic-info/search-info'], resolve),
+        meta: { title: '权限管理' }
+      }, {
+        path: 'management/acconut-setting/',
+        name: 'AccountSetting',
+        meta: { title: '账户设置' },
+        component: (resolve) => require(['components/management/account-setting'], resolve),
+        redirect: 'management/acconut-setting/security-setting',
+        children: [{
+          path: 'security-setting',
+          name: 'SecuritySetting',
+          component: (resolve) => require(['components/management/modules/security-setting'], resolve),
+          meta: { title: '安全设置' }
+        }, {
+          path: 'notice-setting',
+          name: 'NoticeSetting',
+          component: (resolve) => require(['components/management/modules/notice-setting'], resolve),
+          meta: { title: '通知设置' }
+        }]
+      },
+      {
         path: '/system-error',
         name: 'SystemError',
         component: (resolve) => require(['components/error-pages/500'], resolve),
