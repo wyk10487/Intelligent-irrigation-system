@@ -93,11 +93,11 @@ export default {
         dataMode: 'list',
         parentName: 'parent',
         getTotalDatas(callback) {
-          R.Management.users().then(resp => {
-            if (resp.ok) {
-              callback(resp.body);
-            }
-          });
+          // R.Management.users().then(resp => {
+          //   if (resp.ok) {
+          //     callback(resp.body);
+          //   }
+          // });
         }
       },
       menus: [],
@@ -117,15 +117,15 @@ export default {
       this.getData(r);
     },
     getRoles() {
-      R.Management.roles().then(resp => {
-        if (resp.ok) {
-          this.roles = resp.body;
-          if (this.roles.length) {
-            this.role = this.roles[0];
-            this.getData();
-          }
-        }
-      });
+      // R.Management.roles().then(resp => {
+      //   if (resp.ok) {
+      //     this.roles = resp.body;
+      //     if (this.roles.length) {
+      //       this.role = this.roles[0];
+      //       this.getData();
+      //     }
+      //   }
+      // });
     },
     getData() {
       this.menus = G.get('SYS_MENUS');

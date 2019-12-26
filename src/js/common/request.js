@@ -1,11 +1,6 @@
 import Ajax from './ajax';
 
 const Request = {
-  User: {
-    info() {
-      return Ajax.get('/account/info');
-    }
-  },
   Dict: {
     get() {
       return Ajax.get(`/dict`);
@@ -22,10 +17,15 @@ const Request = {
   },
   Login: {
     login(param) {
-      return Ajax.postJson('/login', param);
+      return Ajax.post('/login', param);
+    }
+  },
+  basicInfo: {
+    getAllSensorInfo(time) {
+      return Ajax.get('/getAllSensorInfo' + `?qTime=${time}`);
     },
-    logout(param) {
-      return Ajax.post('/logout', param);
+    getAllRegionInfo(time) {
+      return Ajax.get('/getAllRegionInfo' + `?qTime=${time}`);
     }
   },
   Management: {

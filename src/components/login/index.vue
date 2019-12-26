@@ -126,12 +126,13 @@
 </template>
 <script>
 
-import Login from 'model/login/Login';
-
 export default {
   data() {
     return {
-      login: Login.parse({}),
+      login: {
+        username: '',
+        password: ''
+      },
       loading: false
     };
   },
@@ -140,11 +141,14 @@ export default {
   methods: {
     submit() {
       this.loading = true;
-      R.Login.login(Login.dispose(this.login)).then(resp => {
-        if (resp.ok) {
-          let msg = resp.body;
-          Utils.saveLocal('token', msg.value);
-          window.location = '/';
+      let ajaxMsg = this.login;
+      R.Login.login(ajaxMsg).then(resp => {
+        if (resp.status == 200) {
+          resp.data.avatar = require('../../images/avatar.png');
+          G.set('manager', resp.data);
+          console.log(G);
+          Utils.saveLocal('token', 'test');
+          this.$router.push({ path: '/' });
         }
         this.loading = false;
       });

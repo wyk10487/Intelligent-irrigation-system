@@ -5,7 +5,7 @@ import Utils from './utils';
 const DefaultParam = { repeatable: false };
 
 let ajax = {
-  PREFIX: '/api',
+  PREFIX: 'http://localhost:8082/intelligent-irrigation',
   Author: Utils.getAuthor() || 'wyk',
   requestingApi: new Set(),
   extractUrl: function (url) {
@@ -28,38 +28,13 @@ let ajax = {
       url,
       method: 'GET'
     };
-    if (param) {
-      ;
-      params.params = param;
-    }
     return this.ajax(params, extendParam);
   },
   post: function (url, param, extendParam) {
-    var params = {
-      url,
-      method: 'POST'
-    };
-    if (param) params.data = qs.stringify(param);
-    return this.ajax(params, extendParam);
-  },
-  postJson: function (url, paramJson, extendParam) {
     return this.ajax({
       url,
       method: 'POST',
-      data: paramJson
-    }, extendParam);
-  },
-  patchJson: function (url, paramJson, dataType, extendParam) {
-    return this.ajax({
-      url,
-      method: 'PATCH',
-      data: paramJson
-    }, extendParam);
-  },
-  delete: function (url, extendParam) {
-    return this.ajax({
-      url: url,
-      method: 'DELETE'
+      data: param
     }, extendParam);
   },
   ajax: function (param, extendParam) {
@@ -71,7 +46,7 @@ let ajax = {
     }
     if (params.method != 'GET') {
       if (this.isRequesting(url)) {
-        return new Promise((resolve, reject) => { resolve({ ok: false, msg: '重复请求' }); });
+        return new Promise((resolve, reject) => { resolve({ status: 409, msg: '重复请求' }); });
       }
       if (params.repeatable === false) {
         this.addRequest(url);
@@ -101,10 +76,6 @@ let ajax = {
         that.deleteRequest(params.url);
         let data = response.data;
         let status = response.status;
-        // 如果后端统一封装返回，即所有的请求都是200, 错误码由返回结果提供，则使用以下代码获取状态
-        // if (status == 200) {
-        //   status = data.status;
-        // }
         if (status != 200) {
           if (status == 401) {
             window.top.location = '/login';
@@ -118,12 +89,11 @@ let ajax = {
             HeyUI.$Message.error(data._msg || '请求异常');
           }
         }
-        data.ok = data.status == 200;
         resolve(data);
       }).catch(() => {
         that.deleteRequest(params.url);
         resolve({
-          ok: false
+          status: 409
         });
       });
     });

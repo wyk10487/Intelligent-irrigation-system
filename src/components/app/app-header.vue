@@ -97,13 +97,12 @@
         <i class="h-icon-help"></i>
       </div>
       <DropdownMenu className="app-header-dropdown" trigger="hover" offset="0,5" :width="150" placement="bottom-end" :datas="infoMenu" @onclick="trigger">
-        <Avatar :src="User.avatar" :width="30"><span>{{User.name}}</span></Avatar>
+        <Avatar :src="manager.avatar" :width="30"><span>{{manager.name}}</span></Avatar>
       </DropdownMenu>
     </div>
   </div>
 </template>
 <script>
-import { mapState } from 'vuex';
 import appHeaderMessage from './modules/app-header-message';
 
 export default {
@@ -112,6 +111,7 @@ export default {
   },
   data() {
     return {
+      manager: {},
       infoMenu: [
         { key: 'info', title: '个人中心', icon: 'h-icon-user' },
         { key: 'logout', title: '退出登录', icon: 'h-icon-outbox' }
@@ -119,7 +119,6 @@ export default {
     };
   },
   computed: {
-    ...mapState(['User']),
     siderCollapsed: {
       get() {
         return this.$store.state.siderCollapsed;
@@ -130,6 +129,7 @@ export default {
     }
   },
   mounted() {
+    this.manager = G.get('manager');
     this.listenResize();
   },
   methods: {

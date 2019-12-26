@@ -15,9 +15,6 @@ require('./css/app.less');
 // 开发环境判断
 // process.env.NODE_ENV == 'development'
 
-// 使用mock文件， 自己开发的时候请删除
-require('./mock/index');
-
 // HeyUI已经设定为全局变量，无需引用
 // 设定全局变量请参考根目录下的hey.conf.js文件
 

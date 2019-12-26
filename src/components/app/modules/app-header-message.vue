@@ -84,7 +84,7 @@ export default {
     };
   },
   mounted() {
-    this.getMessageList();
+    // this.getMessageList();
   },
   methods: {
     init() {
